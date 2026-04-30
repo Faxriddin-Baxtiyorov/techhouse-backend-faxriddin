@@ -35,3 +35,74 @@ loginBtn.addEventListener("click", function () {
     login();
   }
 });
+
+
+async function register() {
+  try {
+    if (!usernameInput.value || !emailInput.value || !passwordInput.value) {
+      alert("All fields are required!");
+      return;
+    }
+    const response = await fetch("http://localhost:3002/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: usernameInput.value,
+        email: emailInput.value,
+        password: passwordInput.value
+      })
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Registration failed.");
+      return;
+    }
+
+    passwordInput.value = "";
+    alert(data.message);
+    switcher("Login", "Don't have an account? Sign up", false);
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Could not connect to the server.");
+  }
+}
+
+
+async function login() {
+  try {
+    if (!emailInput.value || !passwordInput.value) {
+      alert("All fields are required!");
+      return;
+    }
+
+    const response = await fetch("http://localhost:3002/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: emailInput.value,
+        password: passwordInput.value
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Login failed.");
+      return;
+    }
+
+    localStorage.setItem("token", data.token);
+    passwordInput.value = "";
+    emailInput.value = "";
+    alert(data.message);
+    window.location.href = "../admin/index.html";
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Could not connect to the server.");
+  }
+}

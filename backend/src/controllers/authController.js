@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
-import users from "../data/db.js";
+import { users } from "../data/db.js";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 
 export async function register(req, res) {
   const { username, email, password } = req.body;
-
   // 1 validation
   if (!username || !email || !password) {
     return res.status(400).json({ message: "All fields are required!" });
@@ -21,7 +21,7 @@ export async function register(req, res) {
 
   // 4 new information
   const newUser = {
-    id: Math.random(),
+    id: uuidv4(),
     username,
     email,
     password: passwordHash,
@@ -62,5 +62,6 @@ export async function login(req, res) {
   );
 
   // success response
-  return res.status(200).json({ message: "Login successfull", token });
+  const { password: _password, ...user } = existingUser;
+  return res.status(200).json({ message: "Login successful", token, user});
 }
