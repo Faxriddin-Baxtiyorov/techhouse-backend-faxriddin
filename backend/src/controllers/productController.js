@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { products } from "../data/db.js";
+
+
 export function getProduct(req, res){
     const id = req.params.id;
     const product = products.find(product => product.id === id);
